@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-ground: #FAF6F4;
+  --color-surface: #FFFFFF;
+  --color-ink: #1C1418;
+  --color-muted: #6B5A62;
+  --color-line: #E5D9DE;
+  --color-pink: #ED96D7;
+  --color-pink-soft: #FBE6F2;
+  --color-rose: #B4407F;
+  --color-on-dark: #F5EEF1;
+  --color-on-dark-muted: #BFAEB6;
+  --color-on-dark-body: #D9CBD2;
+  --color-dark-line: #3A2E33;
+  --color-gold: #D9B26A;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --radius-arch: 9999px 9999px 0 0;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --ease-lift: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  --animate-marquee: marquee 16s linear infinite;
+  --animate-badge: badge-spin 22s linear infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-25%);
+    }
+  }
+
+  @keyframes badge-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-jost), system-ui, sans-serif;
+}
+
+:root {
+  /* Shared side gutter for every container and full-bleed offsets. */
+  --gutter: clamp(20px, 4vw, 56px);
+  /* Sticky header height (44px row + padding + 1px hairline). */
+  --header-h: 69px;
+}
+
+@media (width >= 48rem) {
+  :root {
+    --header-h: 81px;
+  }
+}
+
+/* Page container: 1320px max with the fluid side gutter. */
+@utility shell {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Uppercase text link with a 1px underline that wipes away on hover. */
+@utility link-wipe {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 4px;
+  transition: background-size 0.3s ease;
+
+  @media (hover: hover) {
+    &:hover {
+      background-size: 0 1px;
+      background-position: 100% 100%;
+    }
+  }
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    overflow-x: clip;
+    /* Anchor jumps (#shop, #atelier…) land below the sticky header. */
+    scroll-padding-top: var(--header-h);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    overflow-x: clip;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-rose);
+    outline-offset: 3px;
+  }
+
+  /* Rose is too dark to read as a focus ring on ink; use the brand pink there. */
+  [data-surface="dark"] :focus-visible {
+    outline-color: var(--color-pink);
+  }
+
+  ::selection {
+    background-color: var(--color-pink);
+    color: var(--color-ink);
+  }
 }
