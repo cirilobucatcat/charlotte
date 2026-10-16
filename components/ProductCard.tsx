@@ -14,7 +14,7 @@ export function ProductCard({ product, showAdd = true }: { product: Product; sho
   const from = product.sizes[0].price;
 
   return (
-    <article className="group flex flex-col gap-2.5 md:gap-[18px]">
+    <article className="group flex flex-col gap-2.5 md:gap-4.5">
       <div className="relative">
         <Link
           href={href}
