@@ -26,9 +26,28 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Production build |
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint |
-| `npx next typegen && npx tsc --noEmit` | Typecheck outside a build |
+| `npm run typecheck` | `next typegen && tsc --noEmit`: typecheck outside a build |
+| `npm test` | Vitest unit tests |
+| `npm run test:e2e` | Playwright browser journeys (see [Testing](#testing)) |
 
-`npm run build` and `npm run lint` should both pass with zero errors.
+`npm run build`, `npm run lint`, `npm run typecheck`, `npm test` and `npm run test:e2e` should all pass with zero errors.
+
+## Testing
+
+**Unit tests** (Vitest) sit beside the code they test as `lib/*.test.ts`.
+
+**Browser journeys** (Playwright) live in `e2e/` and run in two projects: desktop Chromium, and an iPhone 14 in WebKit (390px wide, below the 768px breakpoint). Every journey runs in both. Where the layout differs (filter sets, the "+" card button, the menu sheet) a test branches on the project.
+
+```bash
+npx playwright install chromium webkit   # once, to download the browsers
+npm run test:e2e
+```
+
+Playwright starts the production build (`next build && next start`) itself. If something is already listening on :3000 it is reused instead, which is handy with `npm run build && npm run start` in another terminal. `npm run dev` also works but compiles each route on first visit, so it is slower. Locally the tests run one at a time for that reason; CI runs them in parallel against the production build, which it builds in an earlier step so Playwright only starts the server.
+
+The journeys find things by role, label and visible text rather than class names, and they spell out product names and prices instead of importing `lib/products`. That way they keep passing when the catalogue moves out of that file.
+
+The [CI workflow](.github/workflows/ci.yml) runs on every pull request and on pushes to `main`: install, lint, typecheck, build, unit tests, then the browser journeys. If the journeys fail, the Playwright report is attached to the run as an artifact.
 
 ## Routes
 
@@ -48,7 +67,10 @@ components/           Shared UI: Button, Arch, ProductCard, SizePicker, Accordio
 components/illustrations/   Flat SVG cakes
 lib/products.ts       Product data, hero slides, filters
 lib/cart.tsx          CartProvider and useCart()
+lib/*.test.ts         Vitest unit tests
+e2e/                  Playwright browser journeys
 public/               Static assets
+.github/workflows/    CI
 ```
 
 ### Cart
