@@ -7,8 +7,11 @@ Routes: `/` (home), `/cakes/[slug]` (product), `/bag`. The original design refer
 ## Commands
 
 - `npm run dev`: dev server on :3000 (writes to `.next/dev`, so it can run alongside a build)
-- `npm run build`, `npm run lint`: both must pass with zero errors
-- `npx next typegen && npx tsc --noEmit`: typecheck outside a build (`PageProps` / `LayoutProps` are generated globals)
+- `npm run build`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run test:e2e`: all must pass with zero errors
+- `npm run typecheck` (`next typegen && tsc --noEmit`): typecheck outside a build (`PageProps` / `LayoutProps` are generated globals)
+- `npm test`: Vitest unit tests, `lib/*.test.ts`
+- `npm run test:e2e`: Playwright journeys in `e2e/`, each run in desktop Chromium and phone WebKit (`npx playwright install chromium webkit` once). It builds and starts the production server itself, or reuses whatever is already on :3000. CI (`.github/workflows/ci.yml`) runs these checks on every PR
+- e2e tests select by role, label and visible text, never class names, and must not import `lib/products`: they spell out names and prices so they keep passing when the catalogue moves to the database
 
 ## Next.js 16 specifics (read `node_modules/next/dist/docs/` before changing routing or caching)
 

@@ -36,7 +36,7 @@ let state: CartState = EMPTY;
 let loaded = false;
 const listeners = new Set<() => void>();
 
-function clampQty(qty: number) {
+export function clampQty(qty: number) {
   return Math.min(MAX_QTY, Math.max(MIN_QTY, Math.round(qty)));
 }
 
@@ -141,19 +141,24 @@ function write(next: CartState) {
   emit();
 }
 
-function lineId(item: NewLineItem) {
+/** Lines with the same product, size, sponge, message and date are the same line. */
+export function lineId(item: NewLineItem) {
   return [item.slug, item.size, item.sponge, item.message.trim(), item.date].join("|");
+}
+
+/** Add an item to a list of lines: merge into the matching line, or append a new one. */
+export function addLine(items: LineItem[], item: NewLineItem): LineItem[] {
+  const id = lineId(item);
+  const existing = items.find((i) => i.id === id);
+  return existing
+    ? items.map((i) => (i.id === id ? { ...i, qty: clampQty(i.qty + item.qty) } : i))
+    : [...items, { ...item, message: item.message.trim(), id, qty: clampQty(item.qty) }];
 }
 
 const actions = {
   add(item: NewLineItem) {
     const current = getSnapshot();
-    const id = lineId(item);
-    const existing = current.items.find((i) => i.id === id);
-    const items = existing
-      ? current.items.map((i) => (i.id === id ? { ...i, qty: clampQty(i.qty + item.qty) } : i))
-      : [...current.items, { ...item, message: item.message.trim(), id, qty: clampQty(item.qty) }];
-    write({ ...current, items });
+    write({ ...current, items: addLine(current.items, item) });
   },
   setQty(id: string, qty: number) {
     const current = getSnapshot();
