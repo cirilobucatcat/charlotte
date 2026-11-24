@@ -110,3 +110,17 @@ Form error states, an empty-bag illustration, and a dark theme (the site is ligh
 ## Not implemented yet (placeholders)
 
 Search, account and saved (header/tab-bar buttons with no action), footer Care links (`href="#"`), checkout, newsletter backend (the form only shows a thank-you), and the bag's collection/delivery time picker. "Start your design" links to the Strawberry Charlotte product page.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `cirilobucatcat/charlotte`, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five default labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root, both created when first needed. See `docs/agents/domain.md`.
